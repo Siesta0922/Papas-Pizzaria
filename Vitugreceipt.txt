@@ -1,0 +1,32 @@
+
+Receipt for James
+Pizza: Mushroom
+Price: $10.99
+Pizza: Hawaiian
+Price: $12.99
+Total Cost: $23.98
+Date: 2024-10-09 20:50:08.893286
+
+Receipt for Gerail
+Pizza: Mushroom
+Price: $10.99
+Pizza: Hawaiian
+Price: $12.99
+Total Cost: $23.98
+Date: 2024-10-09 20:50:17.068804
+
+Receipt for Mark
+Pizza: Mushroom
+Price: $10.99
+Pizza: Hawaiian
+Price: $12.99
+Total Cost: $23.98
+Date: 2024-10-09 20:50:51.399454
+
+Receipt for James
+Pizza: Mushroom
+Price: $10.99
+Pizza: Hawaiian
+Price: $12.99
+Total Cost: $23.98
+Date: 2024-10-09 20:54:51.948952
