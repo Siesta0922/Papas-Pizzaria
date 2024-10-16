@@ -1,3 +1,4 @@
+import os
 import datetime
 import main_module
 
@@ -14,22 +15,26 @@ pizza_menu = {
     "4": {"name": "Burger Pizza", "price": 11.99}
 }
 
+errorMessage = ""
 def login_employee():
+    global errorMessage; print(errorMessage)
     username = input("Enter your username: ")
     password = input("Enter your password: ")
 
     if username in employee_database and password == employee_database[username]:
-        print("Login successful!")
+        os.system('cls'); input("Login successful!\nPlease enter to continue: ")
         with open("employeelog.txt", "a") as file:
             file.write(f"{username} logged in at {datetime.datetime.now()}\n")
         employee_menu(username)
     else:
-        print("Invalid username or password. Try again!")
+        errorMessage = "Invalid username or password. Try again!"
 
 def employee_menu(username):
+    os.system('cls')
     print("Employee Menu:")
     print("1. Order Pizza")
     print("2. Exit")
+    global errorMessage; print(errorMessage)
 
     choice = input("Enter your choice: ")
 
@@ -39,13 +44,14 @@ def employee_menu(username):
         print("Goodbye!")
         main_module.main()
     else:
-        print("Invalid choice. Try again!")
+        errorMessage = "Invalid choice. Try again!"
 
 def order_pizza(username):
     customer_name = input("Enter the customer's name: ")
     print("Pizza Menu:")
     for key, value in pizza_menu.items():
         print(f"{key}. {value['name']} - ${value['price']}")
+    print(errorMessage)
 
     pizzas_ordered = []
     while True:
@@ -57,6 +63,7 @@ def order_pizza(username):
             pizza_price = pizza_menu[pizza_choice]["price"]
             print(f"You have ordered a {pizza_name} pizza for ${pizza_price}!")
             pizzas_ordered.append({"name": pizza_name, "price": pizza_price})
+            errorMessage = ""
         else:
             print("Invalid pizza choice. Try again!")
 
@@ -85,6 +92,7 @@ def generate_receipt(username, customer_name, pizzas_ordered):
 
 def main():
     while True:
+        os.system('cls')
         print("Employee Login")
         login_employee()
 
