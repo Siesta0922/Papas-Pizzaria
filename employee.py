@@ -144,13 +144,39 @@ def order_pizza(username):
         for key, value in pizza_menu.items():
             available = stock_count.get(value["name"], 0)
             print(f"{key}. {value['name']} - ${value['price']} (Available: {available})")
+        print("5. Remove Last Pizza Ordered")
+        print("6. Finish ordering")
         print(message)
 
-        pizza_choice = input("Enter your pizza choice (1-4), or 'done' to finish ordering: ")
+        pizza_choice = input("Enter your pizza choice (1-4), '5' to undo last, or '6' to finish ordering: ")
 
-        if pizza_choice.lower() == 'done':
+        if pizza_choice == '6':
+            if len(pizzas_ordered) > 0:
+                os.system('cls')
+                print(f"Order Summary for {customer_name}:\n")
+                for pizza in pizzas_ordered:
+                    print(f"Pizza: {pizza['name']} - ${pizza['price']:.2f}")
+                    total_cost += pizza['price']
+                print(f"\nTotal Cost: ${total_cost:.2f}\n")
+                with open("pizzastock.txt", "w") as file:
+                    for pizza in pizza_stock:
+                        file.write(f"{pizza}\n")
+
+                generate_receipt(username, customer_name, pizzas_ordered)
+
+                input("Order complete! Press enter to return to the employee menu.")
+            else:
+                input("No pizzas ordered. Press enter to return to the employee menu.")
             break
 
+        elif pizza_choice == '5':
+            if len(pizzas_ordered) > 0:
+                last_pizza = pizzas_ordered.pop()
+                pizza_stock.append(last_pizza['name'])
+                message = f"Last order ({last_pizza['name']}) has been undone!"
+            else:
+                message = "No pizza to undo!"
+        
         elif pizza_choice in pizza_menu:
             pizza_name = pizza_menu[pizza_choice]["name"]
             pizza_price = pizza_menu[pizza_choice]["price"]
@@ -165,26 +191,7 @@ def order_pizza(username):
         else:
             message = "Invalid pizza choice. Try again!"
 
-    if len(pizzas_ordered) > 0:
-        os.system('cls')
-        print(f"Order Summary for {customer_name}:\n")
-        for pizza in pizzas_ordered:
-            print(f"Pizza: {pizza['name']} - ${pizza['price']:.2f}")
-            total_cost += pizza['price']
-        print(f"\nTotal Cost: ${total_cost:.2f}\n")
-        
-        with open("pizzastock.txt", "w") as file:
-            for pizza in pizza_stock:
-                file.write(f"{pizza}\n")
-
-        input("Order complete! Press enter to return to the employee menu.")
-        generate_receipt(username, customer_name, pizzas_ordered)
-    else:
-        input("No pizzas ordered. Press enter to return to the employee menu.")
-
     employee_menu(username)
-
-
 
 def generate_receipt(username, customer_name, pizzas_ordered):
     receipt_filename = f"{username}receipt.txt"
