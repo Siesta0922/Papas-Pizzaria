@@ -32,20 +32,28 @@ def orderStock(errorMessage = ""):
         orderStock("Wrong input. Try again!")
 
 def getAssortedStock(quantity):
-        flavorCount = [0, 0, 0, 0]
-        pizzas = ["Burger Pizza", "Hawaiian", "Meat Lover's", "Mushroom"]
+    flavorCount = [0, 0, 0, 0]
+    pizzas = ["Burger Pizza", "Hawaiian", "Meat Lover's", "Mushroom"]
+    assortedStock = []
 
-        for i in range(quantity):
-            randomIndex = random.randint(0, len(pizzas)-1)
-            with open("pizzastock.txt", "a") as file:
-                file.write(f"{pizzas[randomIndex]}\n")
-            flavorCount[randomIndex] += 1
+    for i in range(quantity):
+        randomIndex = random.randint(0, len(pizzas)-1)
+        assortedStock.append(pizzas[randomIndex])
+        flavorCount[randomIndex] += 1
 
-        assortedReceipt = ""
-        for i in range(0, len(flavorCount)):
-            if flavorCount[i] > 0:
-                assortedReceipt += f"{pizzas[i]} ({flavorCount[i]}x)\n"
-        return assortedReceipt
+    sortedAssortedStock = mergeSort(assortedStock)
+
+    with open("pizzastock.txt", "a") as file:
+        for pizza in sortedAssortedStock:
+            file.write(f"{pizza}\n")
+
+    assortedReceipt = ""
+    for i in range(0, len(flavorCount)):
+        if flavorCount[i] > 0:
+            assortedReceipt += f"{pizzas[i]} ({flavorCount[i]}x)\n"
+    
+    return assortedReceipt
+
 
 def mergeSort(list):
     if len(list) > 1:
@@ -112,36 +120,69 @@ def employee_menu(username, errorMessage = ""):
         employee_menu(username, "Invalid choice. Try again!")
 
 def order_pizza(username):
-
     pizzas_ordered = []
+    total_cost = 0
     message = ""
+
+    pizza_stock = []
+    try:
+        with open("pizzastock.txt", "r") as file:
+            pizza_stock = file.read().splitlines()
+    except FileNotFoundError:
+        input("Error: pizzastock.txt not found. Please make sure stock exists.")
+        employee_menu(username)
+
+    os.system('cls')
+    customer_name = input("Enter the customer's name: ")
+
     while True:
-
         os.system('cls')
-
-        customer_name = input("Enter the customer's name: ")
-        print("Pizza Menu:")
+        print(f"Ordering for: {customer_name}")
+        print("Pizza Menu (Stock Available):")
+        
+        stock_count = {pizza: pizza_stock.count(pizza) for pizza in set(pizza_stock)}
         for key, value in pizza_menu.items():
-            print(f"{key}. {value['name']} - ${value['price']}")
+            available = stock_count.get(value["name"], 0)
+            print(f"{key}. {value['name']} - ${value['price']} (Available: {available})")
         print(message)
 
         pizza_choice = input("Enter your pizza choice (1-4), or 'done' to finish ordering: ")
+
         if pizza_choice.lower() == 'done':
             break
+
         elif pizza_choice in pizza_menu:
             pizza_name = pizza_menu[pizza_choice]["name"]
             pizza_price = pizza_menu[pizza_choice]["price"]
-            message = f"You have ordered a {pizza_name} pizza for ${pizza_price}!"
-            pizzas_ordered.append({"name": pizza_name, "price": pizza_price})
+
+            if stock_count.get(pizza_name, 0) > 0:
+                message = f"You have ordered a {pizza_name} pizza for ${pizza_price}!"
+                pizzas_ordered.append({"name": pizza_name, "price": pizza_price})
+                pizza_stock.remove(pizza_name)
+                stock_count[pizza_name] -= 1
+            else:
+                message = f"Sorry, {pizza_name} is out of stock."
         else:
             message = "Invalid pizza choice. Try again!"
 
     if len(pizzas_ordered) > 0:
+        os.system('cls')
+        print(f"Order Summary for {customer_name}:\n")
+        for pizza in pizzas_ordered:
+            print(f"Pizza: {pizza['name']} - ${pizza['price']:.2f}")
+            total_cost += pizza['price']
+        print(f"\nTotal Cost: ${total_cost:.2f}\n")
+        
+        with open("pizzastock.txt", "w") as file:
+            for pizza in pizza_stock:
+                file.write(f"{pizza}\n")
+
+        input("Order complete! Press enter to return to the employee menu.")
         generate_receipt(username, customer_name, pizzas_ordered)
     else:
-        os.system('cls')
-        input("No pizzas ordered. Press enter to return to employee menu.")
-        employee_menu(username)
+        input("No pizzas ordered. Press enter to return to the employee menu.")
+
+    employee_menu(username)
 
 
 
