@@ -158,6 +158,8 @@ def order_pizza(username):
                     print(f"Pizza: {pizza['name']} - ${pizza['price']:.2f}")
                     total_cost += pizza['price']
                 print(f"\nTotal Cost: ${total_cost:.2f}\n")
+                input("Press enter to continue: ")
+                
                 with open("pizzastock.txt", "w") as file:
                     for pizza in pizza_stock:
                         file.write(f"{pizza}\n")
