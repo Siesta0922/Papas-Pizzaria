@@ -1,0 +1,8 @@
+
+Receipt for Kea
+Pizza: Hawaiian
+Price: $12.99
+Pizza: Hawaiian
+Price: $12.99
+Total Cost: $25.98
+Date: 2024-10-20 14:35:31.898758
